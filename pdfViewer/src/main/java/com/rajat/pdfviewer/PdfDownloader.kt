@@ -36,7 +36,8 @@ class PdfDownloader(
 
     private fun clearPdfCache(exceptFileName: String? = null) {
         val cacheDir = listener.getContext().cacheDir
-        val pdfFiles = cacheDir.listFiles { _, name -> name.endsWith(".pdf") && name != exceptFileName }
+        val pdfFiles =
+            cacheDir.listFiles { _, name -> name.endsWith(".pdf") && name != exceptFileName }
         pdfFiles?.forEach { it.delete() }
     }
 
@@ -50,10 +51,15 @@ class PdfDownloader(
         val cachedFile = File(listener.getContext().cacheDir, cachedFileName)
 
         if (cachedFile.exists()) {
-            cachedFile.deleteRecursively()
-        }
+            try {
+                listener.onDownloadSuccess(cachedFile.absolutePath)
+            } catch (e: Exception) {
+                download(downloadUrl, cachedFileName)
+            }
 
-        download(downloadUrl, cachedFileName)
+        } else {
+            download(downloadUrl, cachedFileName)
+        }
 
         lastDownloadedFile = cachedFileName // Update the last downloaded file
     }
