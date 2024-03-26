@@ -50,10 +50,10 @@ class PdfDownloader(
         val cachedFile = File(listener.getContext().cacheDir, cachedFileName)
 
         if (cachedFile.exists()) {
-            listener.onDownloadSuccess(cachedFile.absolutePath)
-        } else {
-            download(downloadUrl, cachedFileName)
+            cachedFile.deleteRecursively()
         }
+
+        download(downloadUrl, cachedFileName)
 
         lastDownloadedFile = cachedFileName // Update the last downloaded file
     }
